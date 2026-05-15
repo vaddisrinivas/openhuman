@@ -893,6 +893,42 @@ impl Config {
             }
         }
 
+        // n8n direct-API connector.
+        if let Some(enabled) = env
+            .get_any(&["OPENHUMAN_N8N_ENABLED", "N8N_ENABLED"])
+            .and_then(|raw| parse_env_bool("OPENHUMAN_N8N_ENABLED", &raw))
+        {
+            self.n8n.enabled = enabled;
+        }
+        if let Some(base_url) = env.get_any(&["OPENHUMAN_N8N_BASE_URL", "N8N_BASE_URL"]) {
+            if !base_url.trim().is_empty() {
+                self.n8n.base_url = Some(base_url);
+                self.n8n.enabled = true;
+            }
+        }
+        if let Some(api_key) = env.get_any(&["OPENHUMAN_N8N_API_KEY", "N8N_API_KEY"]) {
+            if !api_key.trim().is_empty() {
+                self.n8n.api_key = Some(api_key);
+                self.n8n.enabled = true;
+            }
+        }
+        if let Some(max) =
+            env.get_any(&["OPENHUMAN_N8N_MAX_RESPONSE_SIZE", "N8N_MAX_RESPONSE_SIZE"])
+        {
+            if let Ok(n) = max.parse::<usize>() {
+                if n > 0 {
+                    self.n8n.max_response_size = n;
+                }
+            }
+        }
+        if let Some(timeout) = env.get_any(&["OPENHUMAN_N8N_TIMEOUT_SECS", "N8N_TIMEOUT_SECS"]) {
+            if let Ok(n) = timeout.parse::<u64>() {
+                if n > 0 {
+                    self.n8n.timeout_secs = n;
+                }
+            }
+        }
+
         // `OPENHUMAN_WEB_SEARCH_ENABLED` is intentionally ignored —
         // web search is unconditionally registered in the tool set.
         // Only the result/timeout budget knobs remain environment-configurable.

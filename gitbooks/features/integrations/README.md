@@ -37,6 +37,28 @@ The catalog spans productivity, business, social, messaging and Google. A non-ex
 
 Some services have **native providers**. Rust modules that know how to ingest the service into the Memory Tree directly (e.g. Gmail's native ingest path). Others are exposed as **proxied tools** only: the agent can call them, but there's no automatic ingest yet. New native providers are added as features land.
 
+## Advanced direct API connectors
+
+Most integrations use one-click OAuth through OpenHuman's backend. Some self-hosted systems are better wired directly because you already own the server and API key.
+
+The first direct API connector is **n8n**. It exposes read-only agent access to workflows and execution history through n8n's public `/api/v1` API.
+
+```toml
+[n8n]
+enabled = true
+base_url = "https://n8n.example.com"
+api_key = "..."
+```
+
+You can also configure it with environment variables:
+
+```bash
+OPENHUMAN_N8N_BASE_URL=https://n8n.example.com
+OPENHUMAN_N8N_API_KEY=...
+```
+
+Private HTTP URLs are allowed for local and tailnet deployments, for example `http://127.0.0.1:5678` or `http://100.x.y.z:5678`. Public HTTP URLs are rejected because the n8n API key would be sent in plaintext.
+
 ## How connections work
 
 Click **Connect** on any integration. A browser window opens for OAuth. Once you sign in, the connection becomes active and OpenHuman starts syncing it through [auto-fetch](../obsidian-wiki/auto-fetch.md) on the next 20-minute tick.
@@ -72,7 +94,7 @@ Two capabilities ship native rather than as integrations because they're load-be
 
 ## Privacy boundary
 
-OpenHuman's core never calls any third-party API directly. All requests go through the OpenHuman backend, which handles OAuth tokens and rate limiting. Your tokens never sit on disk in plaintext on your machine, and the agent only sees the _results_ of tool calls, not the credentials.
+OpenHuman's OAuth integrations go through the OpenHuman backend, which handles OAuth tokens and rate limiting. Direct API connectors such as n8n are opt-in and use credentials you configure on your own device or deployment. The agent only sees the _results_ of tool calls, not the credentials.
 
 See [Privacy & Security](../privacy-and-security.md) for the full boundary.
 

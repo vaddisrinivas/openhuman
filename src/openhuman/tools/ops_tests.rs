@@ -95,6 +95,41 @@ fn all_tools_always_registers_curl() {
 }
 
 #[test]
+fn all_tools_registers_n8n_when_enabled() {
+    let tmp = TempDir::new().unwrap();
+    let security = Arc::new(SecurityPolicy::default());
+    let mem_cfg = MemoryConfig {
+        backend: "markdown".into(),
+        ..MemoryConfig::default()
+    };
+    let mem: Arc<dyn Memory> =
+        Arc::from(crate::openhuman::memory::create_memory(&mem_cfg, tmp.path()).unwrap());
+
+    let browser = BrowserConfig::default();
+    let http = crate::openhuman::config::HttpRequestConfig::default();
+    let mut cfg = test_config(&tmp);
+    cfg.n8n.enabled = true;
+    cfg.n8n.base_url = Some("http://127.0.0.1:5678".into());
+    cfg.n8n.api_key = Some("test-key".into());
+
+    let tools = all_tools(
+        Arc::new(cfg.clone()),
+        &security,
+        mem,
+        &browser,
+        &http,
+        tmp.path(),
+        &HashMap::new(),
+        &cfg,
+    );
+    let names: Vec<&str> = tools.iter().map(|t| t.name()).collect();
+    assert!(
+        names.contains(&"n8n"),
+        "n8n must register when n8n.enabled=true; got: {names:?}"
+    );
+}
+
+#[test]
 fn all_tools_registers_gitbooks_when_enabled() {
     let tmp = TempDir::new().unwrap();
     let security = Arc::new(SecurityPolicy::default());

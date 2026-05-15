@@ -266,6 +266,49 @@ impl Default for SeltzConfig {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(default)]
+pub struct N8nConfig {
+    /// When `true`, register the `n8n` agent tool.
+    #[serde(default)]
+    pub enabled: bool,
+    /// n8n instance URL, for example `https://n8n.example.com` or
+    /// `http://127.0.0.1:5678`. `/api/v1` is appended automatically when
+    /// omitted.
+    #[serde(default)]
+    pub base_url: Option<String>,
+    /// n8n API key. Can also be set via `OPENHUMAN_N8N_API_KEY` or
+    /// `N8N_API_KEY`.
+    #[serde(default)]
+    pub api_key: Option<String>,
+    /// Max bytes read from one n8n API response.
+    #[serde(default = "default_n8n_max_response_size")]
+    pub max_response_size: usize,
+    /// Per-request timeout in seconds.
+    #[serde(default = "default_n8n_timeout_secs")]
+    pub timeout_secs: u64,
+}
+
+fn default_n8n_max_response_size() -> usize {
+    1_000_000
+}
+
+fn default_n8n_timeout_secs() -> u64 {
+    30
+}
+
+impl Default for N8nConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            base_url: None,
+            api_key: None,
+            max_response_size: default_n8n_max_response_size(),
+            timeout_secs: default_n8n_timeout_secs(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(default)]
 pub struct WebSearchConfig {
     #[serde(default = "default_web_search_max_results")]
     pub max_results: usize,

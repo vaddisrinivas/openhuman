@@ -259,6 +259,15 @@ pub fn all_tools_with_runtime(
         tracing::debug!("[seltz] disabled — set SELTZ_API_KEY to enable");
     }
 
+    // n8n — direct public REST API connector. Registered only when enabled
+    // or when OPENHUMAN_N8N_* env config auto-enables it.
+    if root_config.n8n.enabled {
+        tools.push(Box::new(N8nTool::new(&root_config.n8n)));
+        tracing::debug!("[n8n] registered n8n tool");
+    } else {
+        tracing::debug!("[n8n] disabled — set OPENHUMAN_N8N_BASE_URL + OPENHUMAN_N8N_API_KEY");
+    }
+
     // Managed Node.js exec tools — gated on `root_config.node.enabled`.
     // Both share the same `NodeBootstrap` as ShellTool so the download +
     // extract + install pipeline runs at most once per session.

@@ -544,6 +544,29 @@ fn env_overlay_web_search_limits_validated() {
 }
 
 #[test]
+fn env_overlay_n8n_direct_api_config_auto_enables_connector() {
+    let mut cfg = Config::default();
+    assert!(!cfg.n8n.enabled);
+
+    cfg.apply_env_overlay_with(
+        &HashMapEnv::new()
+            .with("OPENHUMAN_N8N_BASE_URL", "http://127.0.0.1:5678")
+            .with("OPENHUMAN_N8N_API_KEY", "secret-key")
+            .with("OPENHUMAN_N8N_MAX_RESPONSE_SIZE", "12345")
+            .with("OPENHUMAN_N8N_TIMEOUT_SECS", "12"),
+    );
+
+    assert!(cfg.n8n.enabled);
+    assert_eq!(cfg.n8n.base_url.as_deref(), Some("http://127.0.0.1:5678"));
+    assert_eq!(cfg.n8n.api_key.as_deref(), Some("secret-key"));
+    assert_eq!(cfg.n8n.max_response_size, 12345);
+    assert_eq!(cfg.n8n.timeout_secs, 12);
+
+    cfg.apply_env_overlay_with(&HashMapEnv::new().with("OPENHUMAN_N8N_ENABLED", "false"));
+    assert!(!cfg.n8n.enabled);
+}
+
+#[test]
 fn env_overlay_proxy_url_enables_proxy_when_not_explicit() {
     let mut cfg = Config::default();
     assert!(!cfg.proxy.enabled);

@@ -30,7 +30,7 @@ pub use schema::{
     DockerRuntimeConfig, EmbeddingRouteConfig, GitbooksConfig, HeartbeatConfig, HttpRequestConfig,
     IMessageConfig, IntegrationToggle, IntegrationsConfig, LarkConfig, LearningConfig, LlmBackend,
     LocalAiConfig, MatrixConfig, MeetConfig, MemoryConfig, MemoryTreeConfig, ModelRouteConfig,
-    MultimodalConfig, ObservabilityConfig, ProxyConfig, ProxyScope, ReflectionSource,
+    MultimodalConfig, N8nConfig, ObservabilityConfig, ProxyConfig, ProxyScope, ReflectionSource,
     ReliabilityConfig, ResourceLimitsConfig, RuntimeConfig, SandboxBackend, SandboxConfig,
     SchedulerConfig, SchedulerGateConfig, SchedulerGateMode, ScreenIntelligenceConfig,
     SecretsConfig, SecurityConfig, SlackConfig, StorageConfig, StorageProviderConfig,
